@@ -216,20 +216,19 @@ public final class LocalExpansionManager implements Listener {
    * @param expansion the expansion to register
    * @return if the expansion was registered
    */
-
-    // Avoid loading two external expansions with the same identifier
-    if (expansion.getExpansionType() == PlaceholderExpansion.Type.EXTERNAL && expansions.containsKey(identifier)) {
-      Msg.warn("Failed to load external expansion %s. Identifier is already in use.", expansion.getIdentifier());
-
+  @ApiStatus.Internal
+  public boolean register(@NotNull final PlaceholderExpansion expansion) {
+    final String identifier = expansion.getIdentifier().toLowerCase(Locale.ROOT);
+  
     if (!expansion.canRegister()) {
       return false;
     }
-    
-    if (expansions.containsKey(identifier)) {
-      Msg.warn("Failed to load expansion %s. Identifier is already in use.",
-          expansion.getIdentifier());
-      return false;
-    }
+
+  // Avoid loading two external expansions with the same identifier
+    if (expansion.getExpansionType() == PlaceholderExpansion.Type.EXTERNAL && expansions.containsKey(identifier)) {
+    Msg.warn("Failed to load external expansion %s. Identifier is already in use.", expansion.getIdentifier());
+    return false;
+  }
 
     if (expansion instanceof Configurable) {
       Map<String, Object> defaults = ((Configurable) expansion).getDefaults();
